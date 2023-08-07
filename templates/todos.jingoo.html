@@ -1,0 +1,22 @@
+{% include "templates/includes/nav.jingoo.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todos</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      {% for todo in todos %}
+      <div>
+        <p>ID: {{ todo.id }}</p>
+        <p>Description: {{ todo.description }}</p>
+        <p>Done: {{ todo.done }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+(executable
+ (public_name server)
+ (name main)
+ (libraries dream jingoo caqti-driver-postgresql) 
+ (modules main handler queries)
+ (preprocess (pps lwt_ppx)))
