@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: black;
+  background-color: rgb(25, 29, 37);
   color: white;
 }
 
@@ -15,5 +15,5 @@ body {
 
 nav {
   padding: 5px;
-  background-color: rgb(31, 31, 31);
+  background-color: rgb(38, 44, 57);
 }
