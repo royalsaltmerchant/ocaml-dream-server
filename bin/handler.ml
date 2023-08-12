@@ -1,6 +1,7 @@
 open Jingoo
 open Lwt.Syntax
 open Queries
+open Bcrypt
 
 let login req =
   let csrf_token = Dream.csrf_token req in
@@ -9,10 +10,15 @@ let login req =
 
 let handle_login req =
   match%lwt Dream.form req with
-  | `Ok ["email", email; "password", password] -> (
-    print_endline email; print_endline password;
-    let%lwt () = Dream.set_session_field req "user" email in
-    Dream.redirect req "/todos")
+  | `Ok ["email", input_email; "password", input_password] -> (
+    print_endline input_email; print_endline input_password;
+    match%lwt Dream.sql req (get_user_by_email_query input_email) with
+    | [] -> Dream.empty `Bad_Request
+    | ((_id, email, password) :: _) -> (
+      if verify input_password (hash_of_string password) then
+        (let%lwt () = Dream.set_session_field req "user" email in
+        Dream.redirect req "/todos")
+      else Dream.empty `Bad_Request))
   | _ -> Dream.empty `Bad_Request
 
 let echo req = 

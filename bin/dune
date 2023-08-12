@@ -1,6 +1,12 @@
 (executable
  (public_name server)
  (name main)
- (libraries dream dream-livereload jingoo caqti-driver-postgresql) 
+ (libraries dream dream-livereload jingoo caqti-driver-postgresql safepass) 
  (modules main handler queries)
  (preprocess (pps lwt_ppx)))
+
+(executable
+ (public_name crypt)
+(name crypt)
+(libraries safepass)
+(modules crypt))

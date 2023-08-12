@@ -13,6 +13,7 @@ let () =
   print_endline "Server running at http://localhost:8080";
   Dream.run ~error_handler:(Dream.error_template error)
   @@ Dream.logger
+  @@ Dream.set_secret (Sys.getenv "OCAML_DREAM_SERVER_SECRET") (* Set environment variable secret *)
   @@ Dream_livereload.inject_script ()
   @@ Dream.sql_pool "postgresql://localhost:5432/postgres"
   @@ Dream.sql_sessions
