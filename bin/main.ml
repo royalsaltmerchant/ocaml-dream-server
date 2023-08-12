@@ -11,7 +11,7 @@ let print_path_middleware inner_handler req =
 
 let () =
   print_endline "Server running at http://localhost:8080";
-  Dream.run
+  Dream.run ~error_handler:(Dream.error_template error)
   @@ Dream.logger
   @@ Dream_livereload.inject_script ()
   @@ Dream.sql_pool "postgresql://localhost:5432/postgres"
@@ -22,6 +22,6 @@ let () =
     Dream.get "/static/**" @@ Dream.static "static";
     Dream.get "/login" login;
     Dream.post "/login" handle_login;
-    Dream.get "/echo/:word" echo_handler;
+    Dream.get "/echo/:word" echo;
     Dream.get "/todos" todos;
   ]
