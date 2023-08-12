@@ -1,19 +1,32 @@
+@import url("./bootstrap5-3-1.min.css");
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  background-color: rgb(25, 29, 37);
-  color: white;
+html {
+  height: 100%;
 }
 
-.container {
-  padding: 10px;
+body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+  font-family: serif;
+  background-color: rgb(25, 29, 37);
+  color: rgb(218, 218, 218);
+}
+
+br {
+  display: block;
+  content: "";
+  margin-top: 10px;
 }
 
 nav {
-  padding: 5px;
+  padding: 5px 10px;
   background-color: rgb(38, 44, 57);
 }

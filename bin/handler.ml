@@ -27,15 +27,23 @@ let echo req =
   Dream.html template
 
 let todos req =
-  let* todos = Dream.sql req get_todos_query in
-  let todo_to_object (id, description, is_done) =
-    Jg_types.Tobj [
-      ("id", Jg_types.Tint id);
-      ("description", Jg_types.Tstr description);
-      ("done", Jg_types.Tbool is_done);
-    ] in
-  let template = Jg_template.from_file "templates/todos.jingoo.html" ~models:[("todos", Jg_types.Tlist (List.map todo_to_object todos));] in
-  Dream.html template
+  match Dream.session_field req "user" with
+  | None -> Dream.empty `Forbidden
+  | Some _email -> (
+    let* todos = Dream.sql req get_todos_query in
+    let todo_to_object (id, description, is_done) =
+      Jg_types.Tobj [
+        ("id", Jg_types.Tint id);
+        ("description", Jg_types.Tstr description);
+        ("done", Jg_types.Tbool is_done);
+      ] in
+    let template = Jg_template.from_file "templates/todos.jingoo.html" ~models:[("todos", Jg_types.Tlist (List.map todo_to_object todos));] in
+    Dream.html template
+  )
+
+let logout req =
+  let _ = Dream.invalidate_session req in
+  Dream.redirect req "/login"
 
 let error _error _debug_info suggested_response =
   let status = Dream.status suggested_response in

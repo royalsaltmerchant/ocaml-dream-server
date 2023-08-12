@@ -25,4 +25,5 @@ let () =
     Dream.post "/login" handle_login;
     Dream.get "/echo/:word" echo;
     Dream.get "/todos" todos;
+    Dream.get "/logout" logout;
   ]
