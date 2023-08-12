@@ -19,3 +19,12 @@ let get_user_by_email_query email =
     fun (module Db : DB) ->
       let* users_or_error = Db.collect_list query (email) in
       Caqti_lwt.or_fail users_or_error
+
+let register_user email password username =
+  let query =
+    let open Caqti_request.Infix in
+    (T.(tup3 string string string) ->* T.int)
+    "INSERT INTO public.\"User\" (email, password, username) VALUES($1,$2,$3) RETURNING id" in
+    fun (module Db : DB) ->
+      let* registered_user_or_error = Db.collect_list query (email, password, username) in
+      Caqti_lwt.or_fail registered_user_or_error

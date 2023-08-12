@@ -22,6 +22,8 @@ let () =
     Dream_livereload.route (); 
     Dream.get "/static/**" @@ Dream.static "static";
     Dream.get "/login" login;
+    Dream.get "/register" register;
+    Dream.post "/register" handle_register;
     Dream.post "/login" handle_login;
     Dream.get "/echo/:word" echo;
     Dream.get "/todos" todos;
