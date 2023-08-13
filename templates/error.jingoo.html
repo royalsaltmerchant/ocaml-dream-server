@@ -1,4 +1,3 @@
-{% include "templates/includes/nav.jingoo.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +8,10 @@
     <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
-    <div class="container-fluid p-3">
+    {% include "templates/includes/header.jingoo.html" %}
+    <main>
       <div>{{code}}</div>
       <div>{{reason}}</div>
-    </div>
+    </main>
   </body>
 </html>

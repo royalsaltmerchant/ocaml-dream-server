@@ -1,25 +1,31 @@
-{% include "templates/includes/nav.jingoo.html" %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <div class="container-fluid p-3">
+    {% include "templates/includes/header.jingoo.html" %}
+    <main>
       <form method="POST" action="/login">
-        <input name="dream.csrf" type="hidden" value="{{ csrf_token }}">
-        <label for="email">Email</label>
-        <input name="email" type="email" autofocus>
-        <br>
-        <label for="password">Password</label>
-        <input name="password" type="password">
-        <br>
-        <button type="submit">Login</button>
+        <fieldset>
+          <legend>Login</legend>
+          <input name="dream.csrf" type="hidden" value="{{ csrf_token }}" />
+          <div class="input-container">
+            <label for="email">Email</label>
+            <input name="email" type="email" required autofocus />
+          </div>
+          <br />
+          <div class="input-container">
+            <label for="password">Password</label>
+            <input name="password" type="password" required />
+          </div>
+          <br />
+          <button type="submit">Submit</button>
+        </fieldset>
       </form>
-    </div>
+    </main>
   </body>
 </html>
