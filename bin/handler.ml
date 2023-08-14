@@ -3,6 +3,10 @@ open Lwt.Syntax
 open Queries
 open Bcrypt
 
+let is_valid_input input =
+  let regex = Str.regexp "^[a-zA-Z0-9]*$" in
+  Str.string_match regex input 0
+
 let login req =
   let csrf_token = Dream.csrf_token req in
   let template = Jg_template.from_file "templates/login.jingoo.html" ~models:[("csrf_token", Jg_types.Tstr csrf_token)] in
@@ -16,25 +20,38 @@ let register req =
 let handle_register req =
   match%lwt Dream.form req with
   | `Ok ["email", input_email; "password", input_password; "username", input_username] -> (
+    if is_valid_input input_username = false then Dream.respond "Invalid username input. Can't contain special characters."
+    else
     let hashed_password = hash input_password in 
-    match%lwt Dream.sql req @@ register_user input_email (string_of_hash hashed_password) input_username with 
-    | [] -> Dream.empty `Bad_Request
-    | ((id) :: _) -> (let%lwt () = Dream.set_session_field req "user" (string_of_int id) in
-    Dream.redirect req "/todos"))
-  | _ -> Dream.empty `Bad_Request
+    try%lwt
+      match%lwt Dream.sql req @@ register_user input_email (string_of_hash hashed_password) input_username with 
+      | [] -> Dream.respond "Something went wrong..."
+      | ((id) :: _) -> (let%lwt () = Dream.set_session_field req "user" (string_of_int id) in
+        let res = Dream.response "Success" in 
+        Dream.set_header res "HX-Redirect" "/todos";
+        Lwt.return res)
+    with
+    | exc -> let msg = Printexc.to_string exc in Dream.log "%s" msg; Dream.respond msg)
+  | _ -> Dream.respond "Something went wrong..."
 
 
 let handle_login req =
   match%lwt Dream.form req with
   | `Ok ["email", input_email; "password", input_password] -> (
-    match%lwt Dream.sql req (get_user_by_email_query input_email) with
-    | [] -> Dream.empty `Bad_Request
-    | ((id, _email, password) :: _) -> (
-      if verify input_password (hash_of_string password) then
-        (let%lwt () = Dream.set_session_field req "user" (string_of_int id) in
-        Dream.redirect req "/todos")
-      else Dream.empty `Bad_Request))
-  | _ -> Dream.empty `Bad_Request
+    let escaped_email = Dream.html_escape input_email in
+    try%lwt
+      match%lwt Dream.sql req (get_user_by_email_query escaped_email) with
+      | [] -> Dream.respond "Can't find user by this email address."
+      | ((id, _email, password) :: _) -> (
+        if verify input_password (hash_of_string password) then
+          (let%lwt () = Dream.set_session_field req "user" (string_of_int id) in
+          let res = Dream.response "Success" in 
+          Dream.set_header res "HX-Redirect" "/todos";
+          Lwt.return res)
+        else Dream.respond "Incorrect password.")
+    with
+    | exc -> let msg = Printexc.to_string exc in Dream.log "%s" msg; Dream.respond msg)
+  | _ -> Dream.respond "Something went wrong..."
 
 let echo req = 
   let param = Dream.param req "word" in

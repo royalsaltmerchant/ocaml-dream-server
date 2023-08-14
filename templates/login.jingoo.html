@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/htmx.min.js"></script>
   </head>
   <body>
     {% include "templates/includes/header.jingoo.html" %}
     <main>
-      <form method="POST" action="/login">
+      {% include "templates/includes/toast.jingoo.html" %}
+      <form hx-post="/login" hx-swap="innerText" hx-target="#toast-message">
         <fieldset>
           <legend>Login</legend>
           <input name="dream.csrf" type="hidden" value="{{ csrf_token }}" />

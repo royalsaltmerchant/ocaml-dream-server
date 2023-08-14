@@ -2,11 +2,11 @@ open Handler
 
 let print_path_middleware inner_handler req =
   let path = Dream.target req in
-  print_endline path;
+  Dream.log "REQUEST PATH: %s" path;
   let user = Dream.session_field req "user" in
   (match user with
-  | Some username -> print_endline username
-  | None -> print_endline "No user");
+  | Some username -> Dream.log "LOGGED IN USER: %s" username
+  | None -> Dream.log "LOGGED IN USER: %s" "No user");
   inner_handler req
 
 let () =
